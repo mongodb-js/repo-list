@@ -7,7 +7,7 @@
     "test": "mocha"
   },
   "bin": {
-    "list-repos": "cli.js"
+    "repo-list": "cli.js"
   },
   "author": "Brahm Gardner",
   "license": "ISC",
