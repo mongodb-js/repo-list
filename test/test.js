@@ -1,7 +1,6 @@
 var stream = require('stream');
 var chai = require('chai');
 var assert = chai.assert;
-var expect = chai.expect;
 
 var reposForOrg = require('../lib/index.js');
 
