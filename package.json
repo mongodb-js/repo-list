@@ -1,0 +1,22 @@
+{
+  "name": "list_repos",
+  "version": "1.0.0",
+  "description": "lists repos in mongodb-js",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "bin": {
+    "list-repos": "cli.js"
+  },
+  "author": "Brahm Gardner",
+  "license": "ISC",
+  "dependencies": {
+    "github": "^1.1.2",
+    "yargs": "^4.7.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3"
+  }
+}
