@@ -1,3 +1,10 @@
+/*
+** This file creates command-line functionality for the module. It uses 
+** yargs to create an interface for typing on the command line, and then it retrieves 
+** the stream of objects from index.js. It then iterates through the stream, printing 
+** out each repository on a new line.
+*/
+
 #!/usr/bin/env node
 
 var reposForOrg = require('./lib/index.js');
