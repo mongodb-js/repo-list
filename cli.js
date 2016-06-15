@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
 ** This file creates command-line functionality for the module. It uses 
 ** yargs to create an interface for typing on the command line, and then it retrieves 
@@ -5,13 +7,11 @@
 ** out each repository on a new line.
 */
 
-#!/usr/bin/env node
-
 var reposForOrg = require('./lib/index.js');
 var yargs = require('yargs');
 var fs = require('fs');
 
-var options = yargs.usage("Usage: $0 <organization> -t <oauth token> [options]")
+var options = yargs.usage("Usage: $0 <organization> [options]")
   .required( 1, "*Organization is required*")
   .option('forked', {
     alias: 'f',
