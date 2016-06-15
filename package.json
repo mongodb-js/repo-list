@@ -12,7 +12,10 @@
   "author": "Brahm Gardner",
   "license": "ISC",
   "dependencies": {
+    "cli-table": "^0.3.1",
     "github": "^1.1.2",
+    "js-yaml": "^3.6.1",
+    "mongodb-extended-json": "^1.6.3",
     "yargs": "^4.7.1"
   },
   "devDependencies": {

@@ -3,6 +3,9 @@
 var reposForOrg = require('./lib/index.js');
 var yargs = require('yargs');
 var fs = require('fs');
+var yaml = require('js-yaml');
+var EJSON = require('mongodb-extended-json');
+var Table = require('cli-table')
 
 var options = yargs.usage("Usage: $0 <organization> -t <oauth token> [options]")
   .required( 1, "*Organization is required*")
@@ -20,6 +23,11 @@ var options = yargs.usage("Usage: $0 <organization> -t <oauth token> [options]")
     describe: 'write to file instead of stdout',
     default: null
   })
+  .option('format', {
+    describe: 'choose format',
+    default: 'json'
+  })
+  .choices('format', ['json', 'yaml', 'table'])
   .default('forked', false)
   .help('help')
   .alias('help', 'h')
@@ -37,7 +45,7 @@ reposForOrg({'org' : options._[0],
   }
   else{
     res.on('data', function(chunk) {
-      data.push(chunk.name);
+      data.push(chunk);
     });
     res.on('end', function() {
       writeData();
@@ -45,17 +53,35 @@ reposForOrg({'org' : options._[0],
   }
 });
 
+function makeTable(arr) {
+  var table = new Table({
+    head: ['Repo Name', 'Repo Url'],
+    colWidths: [50, 50]
+  });
+  for(var i = 0; i < arr.length; ++i) {
+    table.push([arr[i].name, arr[i].url]);
+  }
+  return table;
+}
+
 function writeData() {
+  var output = ''
+  if (argv.format === 'yaml') {
+    output = yaml.dump(data);
+  }
+  else if (argv.format === 'table') {
+    output = makeTable(data).toString();
+  }
+  else {
+    output = EJSON.stringify(data, null, 2);
+  }
+
   if (argv.out) {
     var stream = fs.createWriteStream(argv.out);
-    for (var i = 0; i < data.length; ++i) {
-      stream.write(data[i] + '\n');
-    }
+    stream.write(output);
     stream.end('all data written');
   }
   else {
-    for (var i = 0; i < data.length; ++i) {
-      console.log(data[i]);
-    }
+    console.log(output);
   }
 }
