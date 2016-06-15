@@ -2,7 +2,7 @@
   "name": "list_repos",
   "version": "1.0.0",
   "description": "lists repos in mongodb-js",
-  "main": "index.js",
+  "main": "./lib/index.js",
   "scripts": {
     "test": "mocha"
   },
