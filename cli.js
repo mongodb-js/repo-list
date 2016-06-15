@@ -6,19 +6,9 @@ var fs = require('fs');
 
 var options = yargs.usage("Usage: $0 <organization> -t <oauth token> [options]")
   .required( 1, "*Organization is required*")
-  .option('token', {
-    alias: 't',
-    describe: 'github oauth access token'
-  })
-  .require('token')
   .option('forked', {
     alias: 'f',
     describe: 'include forked directories'
-  })
-  .option('out', {
-    alias: 'o',
-    describe: 'write to file instead of stdout',
-    default: null
   })
   .default('forked', false)
   .help('help')
@@ -29,8 +19,7 @@ var argv = yargs.argv
 var data = []
 
 reposForOrg({'org' : options._[0],
-             'forked' : argv.forked,
-             'token' : argv.token
+             'forked' : argv.forked
            }, function(err, res) {
   if (err) {
     console.error(err);
