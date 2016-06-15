@@ -7,7 +7,7 @@
     "test": "mocha"
   },
   "bin": {
-    "repo-list": "cli.js"
+    "mongodb-repo-list": "cli.js"
   },
   "author": "Brahm Gardner",
   "license": "Apache-2.0",
