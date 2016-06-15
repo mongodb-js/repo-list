@@ -15,7 +15,6 @@ var options = yargs.usage("Usage: $0 <organization> -t <oauth token> [options]")
   })
   .require('token')
   .option('forked', {
-    alias: 'f',
     describe: 'include forked directories'
   })
   .option('out', {
@@ -23,22 +22,35 @@ var options = yargs.usage("Usage: $0 <organization> -t <oauth token> [options]")
     describe: 'write to file instead of stdout',
     default: null
   })
+  .option('keys', {
+    alias: 'k',
+    describe: 'keys to include in output',
+    default: ['name', 'html_url']
+  })
+  .array('keys')
   .option('format', {
     describe: 'choose format',
     default: 'json'
   })
+  .option('grep', {
+    alias: 'g',
+    describe: 'find repos of a certain pattern'
+  })
   .choices('format', ['json', 'yaml', 'table'])
+  .choices('keys', ['name', 'html_url'])
   .default('forked', false)
   .help('help')
   .alias('help', 'h')
   .argv
 
-var argv = yargs.argv
-var data = []
+var argv = yargs.argv;
+var data = [];
 
 reposForOrg({'org' : options._[0],
              'forked' : argv.forked,
-             'token' : argv.token
+             'token' : argv.token,
+             'keys' : argv.keys,
+             'grep' : argv.grep
            }, function(err, res) {
   if (err) {
     console.error(err);
@@ -59,7 +71,7 @@ function makeTable(arr) {
     colWidths: [50, 50]
   });
   for(var i = 0; i < arr.length; ++i) {
-    table.push([arr[i].name, arr[i].url]);
+    table.push([arr[i].name, arr[i].html_url]);
   }
   return table;
 }
