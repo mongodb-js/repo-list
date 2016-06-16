@@ -65,13 +65,21 @@ reposForOrg({'org' : options._[0],
   }
 });
 
-function makeTable(arr) {
+function makeTable(arr, keys) {
+  let cols = []
+  for(var i = 0; i < keys.length; ++i){
+    cols.push(50)
+  }
   var table = new Table({
-    head: ['Repo Name', 'Repo Url'],
-    colWidths: [50, 50]
+    head: keys,
+    colWidths: cols
   });
   for(var i = 0; i < arr.length; ++i) {
-    table.push([arr[i].name, arr[i].html_url]);
+    let new_row = []
+    for(var j = 0; j < keys.length; ++j) {
+      new_row.push(arr[i][keys[j]]);
+    }
+    table.push(new_row);
   }
   return table;
 }
@@ -82,7 +90,7 @@ function writeData() {
     output = yaml.dump(data);
   }
   else if (argv.format === 'table') {
-    output = makeTable(data).toString();
+    output = makeTable(data, argv.keys).toString();
   }
   else {
     output = EJSON.stringify(data, null, 2);
@@ -91,7 +99,7 @@ function writeData() {
   if (argv.out) {
     var stream = fs.createWriteStream(argv.out);
     stream.write(output);
-    stream.end('all data written');
+    stream.end();
   }
   else {
     console.log(output);
