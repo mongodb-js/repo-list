@@ -1,0 +1,22 @@
+{
+  "name": "mongodb-repo-list",
+  "version": "0.1.0",
+  "description": "List repositories in a specified GitHub Organization",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "bin": {
+    "mongodb-repo-list": "cli.js"
+  },
+  "author": "Brahm Gardner",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "github": "^1.1.2",
+    "yargs": "^4.7.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3"
+  }
+}
