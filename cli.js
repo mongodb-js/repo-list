@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+'use strict'
+
 var reposForOrg = require('./lib/index.js');
 var yargs = require('yargs');
 var fs = require('fs');
@@ -46,24 +48,38 @@ var options = yargs.usage("Usage: $0 <organization> -t <oauth token> [options]")
 var argv = yargs.argv;
 var data = [];
 
-reposForOrg({'org' : options._[0],
-             'forked' : argv.forked,
-             'token' : argv.token,
-             'keys' : argv.keys,
-             'grep' : argv.grep
-           }, function(err, res) {
-  if (err) {
-    console.error(err);
-  }
-  else{
-    res.on('data', function(chunk) {
-      data.push(chunk);
-    });
-    res.on('end', function() {
-      writeData();
-    })
-  }
+// reposForOrg({'org' : options._[0],
+//              'forked' : argv.forked,
+//              'token' : argv.token,
+//              'keys' : argv.keys,
+//              'grep' : argv.grep
+//            }, function(err, res) {
+//   if (err) {
+//     console.error(err);
+//   }
+//   else{
+//     res.on('data', function(chunk) {
+//       data.push(chunk);
+//     });
+//     res.on('end', function() {
+//       writeData();
+//     })
+//   }
+// });
+
+var stream = reposForOrg({'org' : options._[0],
+                          'forked' : argv.forked,
+                          'token' : argv.token,
+                          'keys' : argv.keys,
+                          'grep' : argv.grep});
+
+stream.on('data', function(chunk) {
+  data.push(chunk);
 });
+
+stream.on('end', function() {
+  writeData();
+})
 
 function makeTable(arr, keys) {
   let cols = []
