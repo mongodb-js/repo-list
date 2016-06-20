@@ -1,11 +1,13 @@
+
 /*
-** This is the testing suite for index.js. It ensures that index.js returns a stream, 
-** tests that the stream contains objects, and verifies that the objects are sent in 
+** This is the testing suite for index.js. It ensures that index.js returns a stream,
+** tests that the stream contains objects, and verifies that the objects are sent in
 ** the proper format.
 */
 
-var stream = require('stream');
 var chai = require('chai');
+var sinon = require('sinon');
+var GitHubApi = require("github");
 var assert = chai.assert;
 
 var reposForOrg = require('../lib/index.js');
@@ -16,44 +18,44 @@ function isObject(obj) {
 
 function hasProperties(obj) {
   return obj.hasOwnProperty('name')
-    && obj.hasOwnProperty('url');
+    && obj.hasOwnProperty('html_url');
 }
 
 describe('RepoOrgs', function() {
 
-  it('should return a stream', function (done) {
-    reposForOrg({'org' : 'mongodb-js'}, function(err, res) {
-      assert.isTrue(res instanceof stream.Readable);
-      done();
+  before(function(done) {
+    sinon.stub(GitHubApi.prototype, 'authenticate');
+    done();
+  });
+
+  after(function(done){
+    GitHubApi.prototype.authenticate.restore();
+    done();
+  });
+
+  keys = ['name', 'html_url']
+
+  it('should return a stream of objects', function() {
+    var str = reposForOrg({'org' : 'mongodb-js', 'keys' : keys});
+    var data = []
+    str.on('data', function(chunk) {
+      data.push(chunk);
+    });
+
+    str.on('end', function() {
+      assert.isTrue(data.every(isObject));
     });
   });
 
-  it('should return a stream of objects', function(done) {
-    reposForOrg({'org' : 'mongodb-js'}, function(err, res) {
-      var data = []
-      res.on('data', function(chunk) {
-        data.push(chunk);
-      });
+  it('objects have property name and url', function() {
+    var str = reposForOrg({'org' : 'mongodb-js', 'keys' : keys});
+    var data = []
+    str.on('data', function(chunk) {
+      data.push(chunk);
+    });
 
-      res.on('end', function() {
-        assert.isTrue(data.every(isObject));
-        done();
-      });
+    str.on('end', function() {
+      assert.isTrue(data.every(hasProperties));
     });
   });
-
-  it('objects have property name and url', function(done) {
-    reposForOrg({'org' : 'mongodb-js'}, function(err, res) {
-      var data = []
-      res.on('data', function(chunk) {
-        data.push(chunk);
-      });
-
-      res.on('end', function() {
-        assert.isTrue(data.every(hasProperties));
-        done();
-      });
-    });
-  });
-
 });

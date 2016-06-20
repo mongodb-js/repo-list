@@ -9,7 +9,7 @@
     "ci": "npm run check && npm test"
   },
   "bin": {
-    "mongodb-js-repo-list": "cli.js"
+    "mongodb-js-repo-list": "./bin/cli.js"
   },
   "homepage": "http://github.com/mongodb-js/repo-list",
   "repository": {

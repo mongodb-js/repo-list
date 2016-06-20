@@ -1,57 +1,115 @@
 #!/usr/bin/env node
 
 /*
-** This file creates command-line functionality for the module. It uses 
-** yargs to create an interface for typing on the command line, and then it retrieves 
-** the stream of objects from index.js. It then iterates through the stream, printing 
+** This file creates command-line functionality for the module. It uses
+** yargs to create an interface for typing on the command line, and then it retrieves
+** the stream of objects from index.js. It then iterates through the stream, printing
 ** out each repository on a new line.
 */
+
+'use strict'
 
 var reposForOrg = require('./lib/index.js');
 var yargs = require('yargs');
 var fs = require('fs');
+var yaml = require('js-yaml');
+var EJSON = require('mongodb-extended-json');
+var Table = require('cli-table')
 
-var options = yargs.usage("Usage: $0 <organization> [options]")
+var options = yargs.usage("Usage: $0 <organization> -t <token> [options]")
   .required( 1, "*Organization is required*")
   .option('forked', {
-    alias: 'f',
     describe: 'include forked directories'
   })
+  .option('token', {
+    alias: 't',
+    describe: 'oauth token'
+  })
+  .require('token')
+  .option('out', {
+    alias: 'o',
+    describe: 'write to file instead of stdout',
+    default: null
+  })
+  .option('keys', {
+    alias: 'k',
+    describe: 'keys to include in output',
+    default: ['name', 'html_url']
+  })
+  .array('keys')
+  .option('format', {
+    describe: 'choose format',
+    default: 'json'
+  })
+  .option('grep', {
+    alias: 'g',
+    describe: 'find repos of a certain pattern'
+  })
+  .choices('format', ['json', 'yaml', 'table'])
+  .choices('keys', ['name', 'html_url'])
   .default('forked', false)
   .help('help')
   .alias('help', 'h')
   .argv
 
-var argv = yargs.argv
-var data = []
+var argv = yargs.argv;
+var data = [];
 
-reposForOrg({'org' : options._[0],
-             'forked' : argv.forked
-           }, function(err, res) {
-  if (err) {
-    console.error(err);
-  }
-  else{
-    res.on('data', function(chunk) {
-      data.push(chunk.name);
-    });
-    res.on('end', function() {
-      writeData();
-    })
-  }
+var stream = reposForOrg({'org' : options._[0],
+                          'forked' : argv.forked,
+                          'token' : argv.token,
+                          'keys' : argv.keys,
+                          'grep' : argv.grep});
+
+stream.on('data', function(chunk) {
+  data.push(chunk);
 });
 
-function writeData() {
-  if (argv.out) {
-    var stream = fs.createWriteStream(argv.out);
-    for (var i = 0; i < data.length; ++i) {
-      stream.write(data[i] + '\n');
+stream.on('error', function(err) {
+  console.error(err.message);
+})
+
+stream.on('end', function() {
+  writeData();
+})
+
+function makeTable(arr, keys) {
+  let cols = []
+  for(var i = 0; i < keys.length; ++i){
+    cols.push(50);
+  }
+  var table = new Table({
+    head: keys,
+    colWidths: cols
+  });
+  for(var i = 0; i < arr.length; ++i) {
+    let new_row = []
+    for(var j = 0; j < keys.length; ++j) {
+      new_row.push(arr[i][keys[j]]);
     }
-    stream.end('all data written');
+    table.push(new_row);
+  }
+  return table;
+}
+
+function writeData() {
+  var output = ''
+  if (argv.format === 'yaml') {
+    output = yaml.dump(data);
+  }
+  else if (argv.format === 'table') {
+    output = makeTable(data, argv.keys).toString();
   }
   else {
-    for (var i = 0; i < data.length; ++i) {
-      console.log(data[i]);
-    }
+    output = EJSON.stringify(data, null, 2);
+  }
+
+  if (argv.out) {
+    var stream = fs.createWriteStream(argv.out);
+    stream.write(output);
+    stream.end();
+  }
+  else {
+    console.log(output);
   }
 }
