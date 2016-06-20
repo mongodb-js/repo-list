@@ -18,25 +18,16 @@ function hasProperties(obj) {
 describe('RepoOrgs', function() {
 
   before(function(done) {
-    sinon.stub(GitHubApi.prototype, 'authenticate')
-    // sinon.stub(GitHubApi.prototype, 'getAllPages')
-    //       .yields(null, 'hello');
-    // sinon.stub(GitHubApi.prototype.repos, 'getForOrg');
+    sinon.stub(GitHubApi.prototype, 'authenticate');
     done();
   });
 
-  // after(function(done){
-  //   GitHubApi.prototype.authenticate.restore();
-  //   // GitHubApi.prototype.getAllPages.restore();
-  //   done();
-  // });
+  after(function(done){
+    GitHubApi.prototype.authenticate.restore();
+    done();
+  });
 
   keys = ['name', 'html_url']
-
-  it('should return a stream', function () {
-    var str = reposForOrg({'org' : 'mongodb-js', 'keys' : keys});
-    assert.isTrue(str instanceof es.Readable);
-  });
 
   it('should return a stream of objects', function() {
     var str = reposForOrg({'org' : 'mongodb-js', 'keys' : keys});

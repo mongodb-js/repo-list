@@ -48,25 +48,6 @@ var options = yargs.usage("Usage: $0 <organization> -t <oauth token> [options]")
 var argv = yargs.argv;
 var data = [];
 
-// reposForOrg({'org' : options._[0],
-//              'forked' : argv.forked,
-//              'token' : argv.token,
-//              'keys' : argv.keys,
-//              'grep' : argv.grep
-//            }, function(err, res) {
-//   if (err) {
-//     console.error(err);
-//   }
-//   else{
-//     res.on('data', function(chunk) {
-//       data.push(chunk);
-//     });
-//     res.on('end', function() {
-//       writeData();
-//     })
-//   }
-// });
-
 var stream = reposForOrg({'org' : options._[0],
                           'forked' : argv.forked,
                           'token' : argv.token,
@@ -76,6 +57,10 @@ var stream = reposForOrg({'org' : options._[0],
 stream.on('data', function(chunk) {
   data.push(chunk);
 });
+
+stream.on('error', function(err) {
+  console.error(err.message);
+})
 
 stream.on('end', function() {
   writeData();

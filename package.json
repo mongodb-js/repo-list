@@ -1,13 +1,13 @@
 {
-  "name": "list_repos",
+  "name": "mongodb-js-repo-list",
   "version": "1.0.0",
-  "description": "lists repos in mongodb-js",
+  "description": "lists repos for a given organization provided at the command line",
   "main": "./lib/index.js",
   "scripts": {
     "test": "mocha"
   },
   "bin": {
-    "repo-list": "cli.js"
+    "mongodb-js-repo-list": "cli.js"
   },
   "author": "Brahm Gardner",
   "license": "ISC",
@@ -17,10 +17,10 @@
     "github": "^1.1.2",
     "js-yaml": "^3.6.1",
     "mongodb-extended-json": "^1.6.3",
-    "sinon": "^1.17.4",
     "yargs": "^4.7.1"
   },
   "devDependencies": {
+    "sinon": "^1.17.4",
     "chai": "^3.5.0",
     "mocha": "^2.5.3"
   }
