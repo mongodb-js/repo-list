@@ -1,7 +1,7 @@
 {
   "name": "mongodb-js-repo-list",
-  "version": "1.0.0",
-  "description": "lists repos for a given organization provided at the command line",
+  "version": "0.1.0",
+  "description": "List repositories in a specified GitHub Organization",
   "main": "./lib/index.js",
   "scripts": {
     "test": "mocha"
@@ -10,7 +10,7 @@
     "mongodb-js-repo-list": "cli.js"
   },
   "author": "Brahm Gardner",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "cli-table": "^0.3.1",
     "event-stream": "^3.3.2",

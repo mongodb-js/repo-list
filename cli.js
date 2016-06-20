@@ -1,5 +1,12 @@
 #!/usr/bin/env node
 
+/*
+** This file creates command-line functionality for the module. It uses
+** yargs to create an interface for typing on the command line, and then it retrieves
+** the stream of objects from index.js. It then iterates through the stream, printing
+** out each repository on a new line.
+*/
+
 'use strict'
 
 var reposForOrg = require('./lib/index.js');
@@ -9,16 +16,16 @@ var yaml = require('js-yaml');
 var EJSON = require('mongodb-extended-json');
 var Table = require('cli-table')
 
-var options = yargs.usage("Usage: $0 <organization> -t <oauth token> [options]")
+var options = yargs.usage("Usage: $0 <organization> -t <token> [options]")
   .required( 1, "*Organization is required*")
-  .option('token', {
-    alias: 't',
-    describe: 'github oauth access token'
-  })
-  .require('token')
   .option('forked', {
     describe: 'include forked directories'
   })
+  .option('token', {
+    alias: 't',
+    describe: 'oauth token'
+  })
+  .require('token')
   .option('out', {
     alias: 'o',
     describe: 'write to file instead of stdout',
@@ -69,7 +76,7 @@ stream.on('end', function() {
 function makeTable(arr, keys) {
   let cols = []
   for(var i = 0; i < keys.length; ++i){
-    cols.push(50)
+    cols.push(50);
   }
   var table = new Table({
     head: keys,

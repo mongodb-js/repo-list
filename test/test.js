@@ -1,8 +1,14 @@
+
+/*
+** This is the testing suite for index.js. It ensures that index.js returns a stream,
+** tests that the stream contains objects, and verifies that the objects are sent in
+** the proper format.
+*/
+
 var chai = require('chai');
 var sinon = require('sinon');
 var GitHubApi = require("github");
 var assert = chai.assert;
-
 
 var reposForOrg = require('../lib/index.js');
 
