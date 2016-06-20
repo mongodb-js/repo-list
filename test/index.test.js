@@ -15,7 +15,6 @@ function hasProperties(obj) {
 }
 
 describe('mongodb-js-repo-list', function() {
-
   before(function(done) {
     sinon.stub(GitHubApi.prototype, 'authenticate');
     done();
@@ -26,7 +25,7 @@ describe('mongodb-js-repo-list', function() {
     done();
   });
 
-  keys = ['name', 'html_url'];
+  var keys = ['name', 'html_url'];
 
   it('should work', function() {
     assert(mongodbJsRepoList);
