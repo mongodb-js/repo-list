@@ -7,17 +7,17 @@
 ** out each repository on a new line.
 */
 
-'use strict';
+'use strict'
 
 var reposForOrg = require('./lib/index.js');
 var yargs = require('yargs');
 var fs = require('fs');
 var yaml = require('js-yaml');
 var EJSON = require('mongodb-extended-json');
-var Table = require('cli-table');
+var Table = require('cli-table')
 
-var options = yargs.usage('Usage: $0 <organization> -t <token> [options]')
-  .required(1, '*Organization is required*')
+var options = yargs.usage("Usage: $0 <organization> -t <token> [options]")
+  .required( 1, "*Organization is required*")
   .option('forked', {
     describe: 'include forked directories'
   })
@@ -50,18 +50,16 @@ var options = yargs.usage('Usage: $0 <organization> -t <token> [options]')
   .default('forked', false)
   .help('help')
   .alias('help', 'h')
-  .argv;
+  .argv
 
 var argv = yargs.argv;
 var data = [];
 
-var stream = reposForOrg({
-  org: options._[0],
-  forked: argv.forked,
-  token: argv.token,
-  keys: argv.keys,
-  grep: argv.grep
-});
+var stream = reposForOrg({'org' : options._[0],
+                          'forked' : argv.forked,
+                          'token' : argv.token,
+                          'keys' : argv.keys,
+                          'grep' : argv.grep});
 
 stream.on('data', function(chunk) {
   data.push(chunk);
@@ -69,24 +67,24 @@ stream.on('data', function(chunk) {
 
 stream.on('error', function(err) {
   console.error(err.message);
-});
+})
 
 stream.on('end', function() {
   writeData();
-});
+})
 
 function makeTable(arr, keys) {
-  let cols = [];
-  for (var i = 0; i < keys.length; ++i) {
+  let cols = []
+  for(var i = 0; i < keys.length; ++i){
     cols.push(50);
   }
   var table = new Table({
     head: keys,
     colWidths: cols
   });
-  for (var i = 0; i < arr.length; ++i) {
-    let new_row = [];
-    for (var j = 0; j < keys.length; ++j) {
+  for(var i = 0; i < arr.length; ++i) {
+    let new_row = []
+    for(var j = 0; j < keys.length; ++j) {
       new_row.push(arr[i][keys[j]]);
     }
     table.push(new_row);
@@ -95,12 +93,14 @@ function makeTable(arr, keys) {
 }
 
 function writeData() {
-  var output = '';
+  var output = ''
   if (argv.format === 'yaml') {
     output = yaml.dump(data);
-  } else if (argv.format === 'table') {
+  }
+  else if (argv.format === 'table') {
     output = makeTable(data, argv.keys).toString();
-  } else {
+  }
+  else {
     output = EJSON.stringify(data, null, 2);
   }
 
@@ -108,7 +108,8 @@ function writeData() {
     var stream = fs.createWriteStream(argv.out);
     stream.write(output);
     stream.end();
-  } else {
+  }
+  else {
     console.log(output);
   }
 }
