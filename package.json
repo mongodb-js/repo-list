@@ -22,7 +22,7 @@
     "github": "^6.0.4",
     "js-yaml": "^3.6.1",
     "mongodb-extended-json": "^1.6.3",
-    "yargs": "^6.3.0"
+    "yargs": "^6.5.0"
   },
   "devDependencies": {
     "sinon": "^1.17.4",
